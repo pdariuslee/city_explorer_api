@@ -43,11 +43,11 @@ function sendWeatherData(request, response){
   const newArr = [];
 
   // request.query is where the question always lives (Amelia asks for 3 claps -> request.query.claps)
-  
-  
-  // if(request.query.city !== 'Lynnwood'){
+
+  // if(request.query.search !== 'Lynnwood'){
   //   // tell them off (constructively)
   //   return response.status(500).send('try something more like `Lynnwood`');
+
   // }
 
 
@@ -79,6 +79,7 @@ function Weather(jsonObject){
   this.forecast = jsonObject.weather.description;
   this.time = jsonObject.valid_date;
 }
+
 
 // ============= Start Server =============
 
