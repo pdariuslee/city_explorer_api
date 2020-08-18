@@ -4,6 +4,7 @@
 const express = require('express');
 require('dotenv').config(); // reads the file : `.env`
 const cors  = require('cors');
+const superagent = require('superagent');
 
 
 
@@ -40,24 +41,25 @@ function sendWeatherData(request, response){
 
   const jsonObj = require('./data/weather.json');
   const arrFromJson = jsonObj.data;
-  const newArr = [];
 
   // request.query is where the question always lives (Amelia asks for 3 claps -> request.query.claps)
 
-  // if(request.query.search !== 'Lynnwood'){
-  //   // tell them off (constructively)
-  //   return response.status(500).send('try something more like `Lynnwood`');
-
-  // }
 
 
-  arrFromJson.forEach(objInTheJSON => {
-    const newWeatherData = new Weather(objInTheJSON);
-    newArr.push(newWeatherData);
+  // .catch(error => {
+  //   console.log(error);
+  //   response.status(500).send(error.message);
+  // });
+
+
+
+  const weatherArray = arrFromJson.map(objInTheJSON => {
+    return new Weather(objInTheJSON);
+
   });
   // for each obj in the json file, make a constructed obj and put it in arr
   // send arr
-  response.send(newArr);
+  response.send(weatherArray);
 }
 
 // ============= All other functions =============
