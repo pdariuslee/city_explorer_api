@@ -31,11 +31,40 @@ app.get('/location', (request, response) => {
 });
 
 
+app.get('/weather', sendWeatherData);
+
+function sendWeatherData(request, response){
+  // read the json file
+  // format the data
+  // send it with .send
+
+  const jsonObj = require('./data/weather.json');
+  const arrFromJson = jsonObj.data;
+  const newArr = [];
+
+  // request.query is where the question always lives (Amelia asks for 3 claps -> request.query.claps)
+  
+  
+  // if(request.query.city !== 'Lynnwood'){
+  //   // tell them off (constructively)
+  //   return response.status(500).send('try something more like `Lynnwood`');
+  // }
+
+
+  arrFromJson.forEach(objInTheJSON => {
+    const newWeatherData = new Weather(objInTheJSON);
+    newArr.push(newWeatherData);
+  });
+  // for each obj in the json file, make a constructed obj and put it in arr
+  // send arr
+  response.send(newArr);
+}
+
 // ============= All other functions =============
 
 
 function Location(jsonObject){
-  console.log(jsonObject);
+  // console.log(jsonObject);
 
   this.formatted_query = jsonObject[0].display_name;
   this.latitude = jsonObject[0].lat;
@@ -43,6 +72,13 @@ function Location(jsonObject){
 
 }
 
+
+function Weather(jsonObject){
+  // console.log(jsonObject);
+
+  this.forecast = jsonObject.weather.description;
+  this.time = jsonObject.valid_date;
+}
 
 // ============= Start Server =============
 
