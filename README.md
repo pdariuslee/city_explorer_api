@@ -1,14 +1,14 @@
 # lab-06-node-npm-express
 
-Number and name of feature: ________________________________
+Number and name of feature: Location & Weather
 
-Estimate of time needed to complete: _____
+Estimate of time needed to complete: 6-8
 
-Start time: _____
+Start time: 3:00pm
 
-Finish time: _____
+Finish time: 9:00pm
 
-Actual time needed to complete: _____
+Actual time needed to complete: 6hrs
 
 --- 
 
