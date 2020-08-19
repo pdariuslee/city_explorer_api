@@ -1,4 +1,22 @@
 
+// Creating a server
+// 1. touch server.js
+// 1.5 touch .eslintrc.json
+// 1.5 touch .env
+// 2. run `npm init` (say yes to everything) (creates package.json)
+// 3. GET THE SERVER RUNNING
+// 4. install the packages (libraries) `npm install <PACKAGENAME> <PACKAGENAME> <ETC>`
+//    on day 6- those are express and dotenv
+//    dotenv : loads the environment file (".env") for us
+//    express: the app itself - runs the server (http requests, responses, cookies, servery things)
+//    cors: allows local testing of our server
+// 5. in the js file - load the packages
+// 6. configure the `app`
+// 7. tell the server to listen on the port
+// 8. start writing routes to handle requests from the client
+
+
+
 // ============= Packages =============
 
 const express = require('express');
@@ -13,53 +31,57 @@ const superagent = require('superagent');
 const PORT = process.env.PORT || 3003; // short cuircuiting and choosing PORT if it exists in the env, otherwise 3003
 const app = express();
 app.use(cors()); // enables the server to talk to local things
-
+const GEOCODE_API_KEY = process.env.GEOCODE_API_KEY;
+const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
 
 
 // ============= Routes =============
 
-app.get('/location', (request, response) => {
+//route one
+app.get('/location', sendLocationData);
+
+function sendLocationData(req, res){
 
   // load json from file
   // pass it through the constructor
   // send it to the front end
 
-  const jsonObject = require('./data/location.json');
-  const constructedLocation = new Location(jsonObject);
+  const thingToSearchFor = req.query.city; //this would be the city
+  const urlToSearch = `https://us1.locationiq.com/v1/search.php?key=${GEOCODE_API_KEY}&q=${thingToSearchFor}&format=json`;
 
-  response.send(constructedLocation);
+  superagent.get(urlToSearch)
+    .then(whateverComesBack => {
 
-});
+      const superagentResultArray = whateverComesBack.body;
+      const constructedLocations = new Location(superagentResultArray);
+      res.send(constructedLocations);
+    })
+    .catch(error => {
+      console.log(error);
+      res.status(500).send(error.message);
+    });
 
+}
 
+//route two
 app.get('/weather', sendWeatherData);
 
-function sendWeatherData(request, response){
-  // read the json file
-  // format the data
-  // send it with .send
-
-  const jsonObj = require('./data/weather.json');
-  const arrFromJson = jsonObj.data;
-
-  // request.query is where the question always lives (Amelia asks for 3 claps -> request.query.claps)
+function sendWeatherData(req, res){
+  let latitude = req.query.latitude;
+  let longitude = req.query.longitude;
+  const urlToSearchWeather = `https://api.weatherbit.io/v2.0/forecast/daily?&lat=${latitude}&lon=${longitude}&key=${WEATHER_API_KEY}`;
 
 
-
-  // .catch(error => {
-  //   console.log(error);
-  //   response.status(500).send(error.message);
-  // });
-
-
-
-  const weatherArray = arrFromJson.map(objInTheJSON => {
-    return new Weather(objInTheJSON);
-
-  });
-  // for each obj in the json file, make a constructed obj and put it in arr
-  // send arr
-  response.send(weatherArray);
+  superagent.get(urlToSearchWeather)
+    .then(weatherComingBack => {
+      const weatherPass = weatherComingBack.body.data;
+      const weatherArr = weatherPass.map(index => new Weather(index));
+      res.send(weatherArr);
+    })
+    .catch(error => {
+      console.log(error);
+      res.status(500).send(error.message);
+    });
 }
 
 // ============= All other functions =============
