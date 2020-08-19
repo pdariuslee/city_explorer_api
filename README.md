@@ -1,6 +1,6 @@
-# lab-06-node-npm-express
+# Lab-06: node-npm-express
 
-Number and name of feature: Location & Weather
+Number and name of feature: Location, Weather and Error Catching
 
 Estimate of time needed to complete: 6-8
 
@@ -12,11 +12,27 @@ Actual time needed to complete: 6hrs
 
 --- 
 
-# Project Name
+# Lab-07: APIs
+
+Number and name of feature: Location, Weather and Trail
+
+Estimate of time needed to complete: 6-8
+
+Start time: 3:00pm
+
+Finish time: 9:30pm
+
+Actual time needed to complete: 6.5hrs
+
+---
+
+# City Explorer
 
 **Author**: Darius Lee Pasilaban
 
-**Version**: 1.0.0 (increment the patch/fix version number if you make more commits past your first submission)
+**Version**: 7
+
+**Heroku Deployed Link**: [HEROKU](https://pdariuslee-city-explorer-api.herokuapp.com/)
 
 ## Overview
 <!-- Provide a high level overview of what this application is and why you are building it, beyond the fact that it's an assignment for this class. (i.e. What's your problem domain?) -->
