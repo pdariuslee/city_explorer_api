@@ -33,6 +33,7 @@ const app = express();
 app.use(cors()); // enables the server to talk to local things
 const GEOCODE_API_KEY = process.env.GEOCODE_API_KEY;
 const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
+const TRAIL_API_KEY = process.env.TRAIL_API_KEY;
 
 
 // ============= Routes =============
@@ -84,6 +85,28 @@ function sendWeatherData(req, res){
     });
 }
 
+//route three
+app.get('/trails', sendTrailData);
+
+function sendTrailData(req, res){
+  let latitude = req.query.latitude;
+  let longitude = req.query.longitude;
+  const urlToTrails = `https://www.hikingproject.com/data/get-trails?&lat=${latitude}&lon=${longitude}&maxDistance=10&key=${TRAIL_API_KEY}`;
+
+
+  superagent.get(urlToTrails)
+    .then(trailData => {
+      console.log(trailData.body);
+      const trailPass = trailData.body.trails;
+      const trailArr = trailPass.map(index => new Trail(index));
+      res.send(trailArr);
+    })
+    .catch(error => {
+      console.log(error);
+      res.status(500).send(error.message);
+    });
+}
+
 // ============= All other functions =============
 
 
@@ -104,6 +127,19 @@ function Weather(jsonObject){
   this.time = jsonObject.valid_date;
 }
 
+function Trail(jsonObject){
+  this.name = jsonObject.name;
+  this.location = jsonObject.location;
+  this.length = jsonObject.length;
+  this.stars = jsonObject.stars;
+  this.star_votes = jsonObject.starVotes;
+  this.summary = jsonObject.summary;
+  this.trail_url = jsonObject.url;
+  this.conditions = jsonObject.conditionDetails;
+  this.condition_date = jsonObject.conditionDate.split(' ',1);
+  this.condition_time = jsonObject.conditionDate.split(' ')[1];
+
+}
 
 // ============= Start Server =============
 
