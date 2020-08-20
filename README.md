@@ -1,4 +1,4 @@
-# Lab-06: node-npm-express
+## Lab-06: node-npm-express
 
 Number and name of feature: Location, Weather and Error Catching
 
@@ -12,7 +12,7 @@ Actual time needed to complete: 6hrs
 
 --- 
 
-# Lab-07: APIs
+## Lab-07: APIs
 
 Number and name of feature: Location, Weather and Trail
 
@@ -23,6 +23,20 @@ Start time: 3:00pm
 Finish time: 9:30pm
 
 Actual time needed to complete: 6.5hrs
+
+---
+
+## Lab-08: Persistence with a SQL Database
+
+Number and name of feature: Database, Server & Deploy
+
+Estimate of time needed to complete: 6-8
+
+Start time: 3:00pm
+
+Finish time: 11:29pm
+
+Actual time needed to complete: 8.5hrs
 
 ---
 

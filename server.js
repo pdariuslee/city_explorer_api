@@ -23,39 +23,72 @@ const express = require('express');
 require('dotenv').config(); // reads the file : `.env`
 const cors  = require('cors');
 const superagent = require('superagent');
-
+const pg = require('pg');
+const { response } =  require('express');
 
 
 // ============= Global Variables =============
 
 const PORT = process.env.PORT || 3003; // short cuircuiting and choosing PORT if it exists in the env, otherwise 3003
 const app = express();
-app.use(cors()); // enables the server to talk to local things
 const GEOCODE_API_KEY = process.env.GEOCODE_API_KEY;
 const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
 const TRAIL_API_KEY = process.env.TRAIL_API_KEY;
+const DATABASE_URL = process.env.DATABASE_URL;
 
+// ============= Express configs =============
+
+app.use(cors()); // enables the server to talk to local things
+
+// client definition is anything that asks a server for anything
+const client = new pg.Client(DATABASE_URL);
+client.on('error', (error) => console.error(error));
 
 // ============= Routes =============
 
 //route one
 app.get('/location', sendLocationData);
 
+
 function sendLocationData(req, res){
 
-  // load json from file
-  // pass it through the constructor
-  // send it to the front end
+  // load json from file / pass it through the constructor /send it to the front end
 
-  const thingToSearchFor = req.query.city; //this would be the city
-  const urlToSearch = `https://us1.locationiq.com/v1/search.php?key=${GEOCODE_API_KEY}&q=${thingToSearchFor}&format=json`;
+  const sqlStatement = 'SELECT * FROM locations;';
+  const locationSearch = req.query.city; //this would be the city
 
-  superagent.get(urlToSearch)
-    .then(whateverComesBack => {
+  client.query(sqlStatement)
+    .then(resultFromSql => {
 
-      const superagentResultArray = whateverComesBack.body;
-      const constructedLocations = new Location(superagentResultArray);
-      res.send(constructedLocations);
+      // console.log(resultFromSql.rows);
+      let existingValue = resultFromSql.rows.map(element => element.search_query);
+      if(existingValue.includes(locationSearch)){
+        client.query(`SELECT * FROM locations WHERE search_query = '${locationSearch}'`)
+          .then(storedData => {
+            res.send(storedData.rows[0]);
+          });
+      } else {
+        const urlToSearch = `https://us1.locationiq.com/v1/search.php?key=${GEOCODE_API_KEY}&q=${locationSearch}&format=json`;
+
+        superagent.get(urlToSearch)
+          .then(APIresult => {
+
+            const superagentResultArray = APIresult.body;
+            // console.log(superagentResultArray[0].display_name);
+            const queryString = ('INSERT INTO locations (search_query, formatted_query, latitude, longitude) VALUES ($1,$2,$3,$4)');
+            const valueArray = [locationSearch, superagentResultArray[0].display_name, superagentResultArray[0].lat, superagentResultArray[0].lon];
+            client.query(queryString, valueArray)
+              .then( insertedData => {
+                // console.log(insertedData);
+                res.send(new Location(superagentResultArray));
+              });
+            // const constructedLocations = new Location(superagentResultArray);
+
+
+
+            // res.send(constructedLocations);
+          });
+      }
     })
     .catch(error => {
       console.log(error);
@@ -96,7 +129,7 @@ function sendTrailData(req, res){
 
   superagent.get(urlToTrails)
     .then(trailData => {
-      console.log(trailData.body);
+      // console.log(trailData.body);
       const trailPass = trailData.body.trails;
       const trailArr = trailPass.map(index => new Trail(index));
       res.send(trailArr);
@@ -144,4 +177,8 @@ function Trail(jsonObject){
 // ============= Start Server =============
 
 // app.listen(PORT, () => console.log(`Yass! Connected!`));
-app.listen(PORT, () => console.log(`we are running on PORT : ${PORT}`));
+client.connect()
+  .then(() => {
+    app.listen(PORT, () => console.log(`we are running on PORT : ${PORT}`));
+
+  });
