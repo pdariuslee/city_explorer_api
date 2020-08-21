@@ -40,6 +40,20 @@ Actual time needed to complete: 8.5hrs
 
 ---
 
+## Lab-09: SQL continued
+
+Number and name of feature: Movies, Yelp & Pagination
+
+Estimate of time needed to complete: 6-8
+
+Start time: 4:00pm
+
+Finish time: 
+
+Actual time needed to complete: 
+
+---
+
 # City Explorer
 
 **Author**: Darius Lee Pasilaban
