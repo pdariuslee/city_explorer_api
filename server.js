@@ -36,6 +36,7 @@ const WEATHER_API_KEY = process.env.WEATHER_API_KEY;
 const TRAIL_API_KEY = process.env.TRAIL_API_KEY;
 const DATABASE_URL = process.env.DATABASE_URL;
 const MOVIE_API_KEY = process.env.MOVIE_API_KEY;
+const YELP_API_KEY = process.env.YELP_API_KEY;
 
 // ============= Express configs =============
 
@@ -165,6 +166,29 @@ function sendMovies(req, res){
 }
 
 
+//route 5
+app.get('/yelp', sendYelp);
+
+function sendYelp(req, res){
+
+  let yelpQuery = req.query.search_query;
+  const urlToYelpAPI = `https://api.yelp.com/v3/businesses/search?location=${yelpQuery}`;
+
+  superagent.get(urlToYelpAPI)
+    .set('Authorization', `Bearer ${YELP_API_KEY}`)
+    .then(yelpAPIData => {
+
+      const yelpArr = yelpAPIData.body.businesses.map(yelpData => new Yelp(yelpData));
+      res.send(yelpArr);
+
+    })
+    .catch(error => {
+      console.log(error);
+      res.status(500).send(error.message);
+    });
+}
+
+
 // ============= All other functions =============
 
 
@@ -207,6 +231,15 @@ function Movie(jsonObject){
   this.image_url = 'https://image.tmdb.org/t/p/w1280' + jsonObject.backdrop_path;
   this.popularity = jsonObject.popularity;
   this.released_on = jsonObject.release_date;
+}
+
+function Yelp(jsonObject){
+
+  this.name = jsonObject.name;
+  this.image_url = jsonObject.image_url;
+  this.price = jsonObject.price;
+  this.rating = jsonObject.rating;
+  this.url = jsonObject.url;
 }
 
 // ============= Start Server =============
