@@ -79,3 +79,13 @@ Actual time needed to complete:
 ## Credits and Collaborations
 <!-- Give credit (and a link) to other people or resources that helped you build this application. -->
 <!--  -->
+
+## Acknowledgements
+
+  #### This won't be possible without the help of the following individuals:
+
+  - [Jack Nelson](https://www.linkedin.com/in/jnelsonjava/)
+
+  - [Amelia Waggoner](https://www.linkedin.com/in/amelia-waggoner-7b03a0133/)
+
+  

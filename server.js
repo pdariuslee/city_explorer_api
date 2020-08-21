@@ -166,13 +166,14 @@ function sendMovies(req, res){
 }
 
 
+
 //route 5
 app.get('/yelp', sendYelp);
 
 function sendYelp(req, res){
 
   let yelpQuery = req.query.search_query;
-  const urlToYelpAPI = `https://api.yelp.com/v3/businesses/search?location=${yelpQuery}`;
+  const urlToYelpAPI = `https://api.yelp.com/v3/businesses/search?location=${yelpQuery}&limit=5&total=1000`;
 
   superagent.get(urlToYelpAPI)
     .set('Authorization', `Bearer ${YELP_API_KEY}`)
